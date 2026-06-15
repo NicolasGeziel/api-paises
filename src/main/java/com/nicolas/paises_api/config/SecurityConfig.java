@@ -27,6 +27,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/usuario/autenticar",
                                 "/h2-console/**",
+                                "/usuario/renovar-ticket",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"

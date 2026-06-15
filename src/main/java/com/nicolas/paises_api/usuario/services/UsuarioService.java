@@ -54,11 +54,9 @@ public class UsuarioService {
 
         if (tokenOpt.isPresent()) {
             Token token = tokenOpt.get();
-            if (LocalDateTime.now().isBefore(token.getExpiracao())) {
-                token.setExpiracao(LocalDateTime.now().plusMinutes(5));
-                tokenRepository.save(token);
-                return true;
-            }
+            token.setExpiracao(LocalDateTime.now().plusMinutes(5));
+            tokenRepository.save(token);
+            return true;
         }
         return false;
     }
