@@ -32,37 +32,46 @@ public class PaisController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<?> listar(@RequestParam String token) {
+    public ResponseEntity<?> listar(@RequestHeader("Authorization") String token) {
         if (validarToken(token) == null) {
             return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok(paisRepository.findAll());
     }
 
-    @PostMapping("/salvar")
-    public ResponseEntity<?> salvar(@RequestParam String token, @Valid @RequestBody Pais pais) {
+    @PostMapping
+    public ResponseEntity<?> criar(@RequestHeader("Authorization") String token, @Valid @RequestBody Pais pais) {
         Token tokenValido = validarToken(token);
         if (tokenValido == null || !tokenValido.isAdministrador()) {
-            return ResponseEntity.status(401).build(); // HTTP_ERROR 401
+            return ResponseEntity.status(401).build();
         }
+        pais.setId(null);
+        return ResponseEntity.status(201).body(paisRepository.save(pais));
+    }
 
-        if (pais.getId() != null && pais.getId() == 0) {
-            pais.setId(null);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@RequestHeader("Authorization") String token,@Valid @RequestBody Pais pais, @PathVariable Long id) {
+        Token tokenValido = validarToken(token);
+        if (tokenValido == null || !tokenValido.isAdministrador()) {
+            return ResponseEntity.status(401).build();
         }
-        Pais paisSalvo = paisRepository.save(pais);
-        return ResponseEntity.ok(paisSalvo);
+        if (!paisRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        pais.setId(id);
+        return ResponseEntity.ok(paisRepository.save(pais));
     }
 
     @GetMapping("/pesquisar")
-    public ResponseEntity<?> pesquisar(@RequestParam String token, @RequestParam String filtro) {
+    public ResponseEntity<?> pesquisar(@RequestHeader("Authorization") String token, @RequestParam String filtro) {
         if (validarToken(token) == null) {
             return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok(paisRepository.findByNomeContainingIgnoreCase(filtro));
     }
 
-    @GetMapping("/excluir")
-    public ResponseEntity<Boolean> excluir(@RequestParam String token, @RequestParam Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@RequestHeader("Authorization") String token, @PathVariable Long id) {
         Token tokenValido = validarToken(token);
 
         if (tokenValido == null || !tokenValido.isAdministrador()) {
@@ -71,8 +80,8 @@ public class PaisController {
 
         if (paisRepository.existsById(id)) {
             paisRepository.deleteById(id);
-            return ResponseEntity.ok(true);
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(false);
+        return ResponseEntity.notFound().build();
     }
 }
