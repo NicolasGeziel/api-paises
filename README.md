@@ -1,6 +1,6 @@
-# API Cadastro de Países - Backend
+# API Cadastro de Países
 
-Este projeto é a API RESTful desenvolvida em Spring Boot para o teste técnico de cadastro de países, com controle de autenticação próprio e persistência em banco de dados em memória.
+Este projeto é a API RESTful desenvolvida em Spring Boot para cadastro de países, com controle de autenticação próprio e persistência em banco de dados em memória.
 
 ## Tecnologias Utilizadas
 * **Java:** 21
